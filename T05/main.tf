@@ -1,13 +1,13 @@
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-1"
 }
 
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners = ["099720109477"]
+  owners      = ["099720109477"]
   filter {
-    name = "name"
-    values = [ "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*" ]
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 }
 
@@ -17,7 +17,7 @@ data "aws_ami" "ubuntu" {
 # }
 
 resource "aws_instance" "hello" {
-  ami = data.aws_ami.ubuntu.id
+  ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
   tags = {
     name = "HelloWorld"

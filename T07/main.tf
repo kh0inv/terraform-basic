@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-1"
 }
 
 resource "aws_s3_bucket" "web_static" {
@@ -14,7 +14,7 @@ resource "aws_s3_bucket" "web_static" {
 
 resource "aws_s3_bucket_acl" "web_static_acl" {
   bucket = aws_s3_bucket.web_static.id
-  acl = "public-read"
+  acl    = "public-read"
 }
 
 resource "aws_s3_bucket_policy" "web_static_policy" {
@@ -24,13 +24,13 @@ resource "aws_s3_bucket_policy" "web_static_policy" {
 
 data "aws_iam_policy_document" "allow_acces_web_static" {
   statement {
-    sid = "PublicReadGetObject"
+    sid    = "PublicReadGetObject"
     effect = "Allow"
     principals {
-      type = "*"
+      type        = "*"
       identifiers = ["*"]
     }
-    actions = ["s3:GetObject"]
+    actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.web_static.arn}/*"]
   }
 }

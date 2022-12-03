@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-1"
 }
 
 resource "aws_s3_bucket" "static_web" {
@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "static_web" {
 
 resource "aws_s3_bucket_acl" "name" {
   bucket = aws_s3_bucket.static_web.id
-  acl = "public-read"
+  acl    = "public-read"
 }
 
 resource "aws_s3_bucket_policy" "name" {
@@ -18,13 +18,13 @@ resource "aws_s3_bucket_policy" "name" {
 
 data "aws_iam_policy_document" "allow_access_static_web" {
   statement {
-    sid = "PublicReadGetObject"
+    sid    = "PublicReadGetObject"
     effect = "Allow"
     principals {
-      type = "*"
+      type        = "*"
       identifiers = ["*"]
     }
-    actions = ["s3:GetObject"]
+    actions   = ["s3:GetObject"]
     resources = ["arn:aws:s3:::terraform-series-bai3/*"]
   }
 }
@@ -40,11 +40,11 @@ resource "aws_s3_bucket_website_configuration" "name" {
 }
 
 resource "aws_s3_object" "object" {
-  for_each = fileset(path.module, "static-web-main/**/*")
-  bucket = aws_s3_bucket.static_web.id
-  key = replace(each.value, "static-web-main", "")
-  source = each.value
-  etag = filemd5("${each.value}")
+  for_each     = fileset(path.module, "static-web-main/**/*")
+  bucket       = aws_s3_bucket.static_web.id
+  key          = replace(each.value, "static-web-main", "")
+  source       = each.value
+  etag         = filemd5("${each.value}")
   content_type = lookup(local.mine_types, split(".", each.value)[length(split(".", each.value))])
 }
 
