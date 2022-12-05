@@ -1,8 +1,9 @@
 resource "aws_vpc" "my_vpc" {
   cidr_block = var.vpc_cidr_block
   enable_dns_hostnames = true
+
   tags = {
-    "name" = "custom"
+    Name = "custom"
   }
 }
 
@@ -11,8 +12,9 @@ resource "aws_subnet" "private_subnet" {
   vpc_id = aws_vpc.my_vpc.id
   cidr_block = var.private_subnet_ip[count.index]
   availability_zone = var.availability_zone[count.index % length(var.availability_zone)]
+
   tags = {
-    "Name" = "private-subnet"
+    Name = "private-subnet"
   }
 }
 
@@ -21,15 +23,17 @@ resource "aws_subnet" "public_subnet" {
   vpc_id = aws_vpc.my_vpc.id
   cidr_block = var.public_subnet_ip[count.index]
   availability_zone = var.availability_zone[count.index % length(var.availability_zone)]
+
   tags = {
-    "Name" = "public-subnet"
+    Name = "public-subnet"
   }
 }
 
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.my_vpc.id
+
   tags = {
-    "Name" = "custom"
+    Name = "custom"
   }
 }
 
@@ -39,14 +43,15 @@ resource "aws_route_table" "public" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw.id
   }
+
   tags = {
-    "name" = "public"
+    Name = "public"
   }
 }
 
 resource "aws_route_table_association" "public_router" {
-  for_each = [ for v in aws_subnet.public_subnet.id: v.id ]
-  subnet_id = each.value
+  for_each       = { for k, v in aws_subnet.public_subnet : k => v }
+  subnet_id      = each.value.id
   route_table_id = aws_route_table.public.id
 }
 
@@ -77,5 +82,5 @@ resource "aws_route_table" "private" {
 resource "aws_route_table_association" "private_router" {
   for_each = { for k, v in aws_subnet.private_subnet: k => v }
   subnet_id =  each.value.id
-  route_table_id = aws_route_table.private
+  route_table_id = aws_route_table.private.id
 }
