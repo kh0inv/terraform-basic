@@ -12,10 +12,9 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# terraform apply -var-file="production.tfvars"
 resource "aws_instance" "hello" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
+  instance_type = "t2.micro"
 
   tags = {
     Name = "HelloWorld"

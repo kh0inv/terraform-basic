@@ -105,7 +105,7 @@ Trong terraform, resource sẽ có hai loại thuộc tính (attribute) là forc
 
 ***Khi update resource cần chạy plan để kiểm tra có bị re-create hay không***
 
-Xóa resource bằng terraform destroy sẽ sinh ra file backup
+Xóa resource bằng `terraform destroy` sẽ sinh ra file backup
 ```
 .
 ├── main.tf
@@ -120,7 +120,7 @@ variable "instance_type" {
   description = "Instance type of the EC2"
 }
 ```
-Khối này có thể đặt trong main.tf hoặc để ra 1 file riêng
+Khối này có thể đặt trong `main.tf` hoặc để ra 1 file `.tf` với tên bất kì
 
 Thuộc tính `type` là bắt buộc, để chỉ định kiểu của biến. Các type hợp lệ:
 - Basic type: string, number, bool
@@ -128,7 +128,7 @@ Thuộc tính `type` là bắt buộc, để chỉ định kiểu của biến. 
 
 *Trong terraform, type number và type bool sẽ được convert thành type string khi cần thiết. Nghĩa là 1 sẽ thành "1", true sẽ thành "true"*
 
-Sau khi định nghĩa biến, giờ phải gán giá trị cho biến. Tạo file tên là terraform.tfvars.
+Sau khi định nghĩa biến, giờ phải gán giá trị cho biến. Tạo file tên là `terraform.tfvars`
 ```
 instance_type = "t2.micro"
 ```
@@ -152,6 +152,61 @@ variable "instance_type" {
   validation {
     condition = contains(["t2.micro", "t3.small"], var.instance_type)
     error_message = "Value not allow"
+  }
+}
+```
+
+## Output
+
+Khối này có thể đặt trong file `main.tf` hoặc tạo file `.tf` với tên bất kỳ
+```
+output "ec2_private_ip_addr" {
+  description = "The private IP address of the main server instance"
+  value = aws_instance.hello.private_ip
+}
+```
+
+có thể nhóm nhiều output trong 1 `value` xuất ra
+```
+output "ec2_ip_addr" {
+  description = "The public IP address of the main server instance"
+
+  value = {
+    public_ip = aws_instance.hello.public_ip
+    private_ip = aws_instance.hello.public_ip
+  }
+}
+```
+
+## Count parameter
+
+Sử dụng `count` để tạo hàng loạt
+```
+resource "aws_instance" "hello" {
+  count = 5
+  ...
+}
+```
+
+## For expressions
+
+```
+for <value> in <list> : <return value>
+```
+- Áp dụng để tạo 1 mảng mới `[ for s in var.words: function(s) ]`
+- Áp dụng để tạo 1 map mới `{ for k, v in var.words: k => function(v) }`
+
+```
+ouput "ec2_output" {
+  value = {
+    public_ip = [ for v in aws_instance.hello: v.public_ip ]
+  }
+}
+```
+```
+ouput "ec2_output" {
+  value = {
+    public_ip = { for k, v in aws_instance.hello: format("public_ip%d", k+1) => v.public_ip }
   }
 }
 ```

@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "static_web" {
-  bucket = "test-name-bucket"
+  bucket = "test-name-bucket-123132"
 }
 
 resource "aws_s3_bucket_acl" "name" {
@@ -25,12 +25,13 @@ data "aws_iam_policy_document" "allow_access_static_web" {
       identifiers = ["*"]
     }
     actions   = ["s3:GetObject"]
-    resources = ["arn:aws:s3:::terraform-series-bai3/*"]
+    resources = ["${aws_s3_bucket.static_web.arn}/*"]
   }
 }
 
 resource "aws_s3_bucket_website_configuration" "name" {
   bucket = aws_s3_bucket.static_web.bucket
+
   index_document {
     suffix = "index.html"
   }
@@ -40,16 +41,16 @@ resource "aws_s3_bucket_website_configuration" "name" {
 }
 
 resource "aws_s3_object" "object" {
-  for_each     = fileset(path.module, "static-web-main/**/*")
+  for_each     = fileset(path.module, "source-static-web/**/*")
   bucket       = aws_s3_bucket.static_web.id
-  key          = replace(each.value, "static-web-main", "")
+  key          = replace(each.value, "source-static-web", "")
   source       = each.value
   etag         = filemd5("${each.value}")
-  content_type = lookup(local.mine_types, split(".", each.value)[length(split(".", each.value))])
+  content_type = lookup(local.mine_types, split(".", each.value)[length(split(".", each.value)) - 1])
 }
 
 locals {
-  mime_types = {
+  mine_types = {
     html  = "text/html"
     css   = "text/css"
     ttf   = "font/ttf"

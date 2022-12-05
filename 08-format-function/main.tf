@@ -12,12 +12,18 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# terraform apply -var-file="production.tfvars"
 resource "aws_instance" "hello" {
+  count         = 3
   ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
+  instance_type = "t2.micro"
 
   tags = {
     Name = "HelloWorld"
   }
+}
+
+# Use for expressions to create map of public ip, with key replace by format() function
+output "ec2_public_ip" {
+  description = "Map of public IP address"
+  value = { for i, v in aws_instance.hello : format("public_ip%d", i + 1) => v.public_ip }
 }
