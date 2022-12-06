@@ -22,7 +22,7 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-resource "aws_db_subnet_group" "default" {
+resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "${var.project}-db-subnet-group"
   subnet_ids = module.vpc.private_subnets
 
