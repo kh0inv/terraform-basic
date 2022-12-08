@@ -37,6 +37,76 @@ module "vpc" {
   }
 
   tags = {
-    Project = "${var.project}"
+    Project     = "${var.project}"
+    Environment = "prod"
+  }
+}
+
+resource "aws_iam_role" "eks_role" {
+  name = "eks-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = "sts:AssumeRole"
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  managed_policy_arns = ["arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"]
+
+  tags = {
+    Name = "eks-role"
+  }
+}
+
+resource "aws_eks_cluster" "cluster" {
+  name     = var.cluster_name
+  role_arn = aws_iam_role.eks_role.arn
+
+  vpc_config {
+    endpoint_private_access = false
+    endpoint_public_access  = true
+    public_access_cidrs     = ["0.0.0.0/0"]
+    subnet_ids              = concat(module.vpc.private_subnets, module.vpc.public_subnets)
+  }
+
+  depends_on = [aws_iam_role.eks_role]
+}
+
+
+resource "aws_iam_role" "eks_fargate_role" {
+  name = "eks-fargate-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "eks-fargate-pods.amazonaws.com"
+      }
+    }]
+  })
+
+  managed_policy_arns = ["arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"]
+}
+
+resource "aws_eks_fargate_profile" "kube_system" {
+  cluster_name           = aws_eks_cluster.cluster.name
+  fargate_profile_name   = "kube-system"
+  pod_execution_role_arn = aws_iam_role.eks_fargate_role.arn
+
+  # These subnets must have the following resource tag:
+  # kubernetes.io/cluster/<CLUSTER_NAME>.
+  subnet_ids = module.vpc.private_subnets
+
+  selector {
+    namespace = "kube-system"
   }
 }
