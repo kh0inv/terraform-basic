@@ -1,5 +1,6 @@
 locals {
-  project = "swim"
+  project  = "mamnon"
+  key_name = "admin-khoinv-key"
 }
 
 provider "aws" {
@@ -15,18 +16,70 @@ module "networking" {
   public_subnets  = ["10.192.10.0/24", "10.192.11.0/24"]
 }
 
-module "database" {
-  source = "./database"
+# module "database" {
+#   source = "./database"
 
-  project        = local.project
-  subnet_group   = module.networking.db_subnet_group
-  security_group = module.networking.sg
+#   project        = local.project
+#   subnet_group   = module.networking.db_subnet_group
+#   security_group = module.networking.security_group
+
+#   depends_on = [
+#     module.networking
+#   ]
+# }
+
+# module "loadbalancer" {
+#   source = "./loadbalancer"
+
+#   project = local.project
+#   security_groups = module.networking.security_groups
+# }
+
+module "autoscaling" {
+  source = "./autoscaling"
+
+  project                  = local.project
+  vpc                      = module.networking.vpc
+  security_groups          = module.networking.security_groups
+  key_name                 = "admin-khoinv-key"
+  web_instance_profile_arn = module.role.ec2_instance_profile.arn
 
   depends_on = [
+    module.role,
     module.networking
   ]
 }
 
-# module "autoscaling" {
-#   source = "./autoscaling"
-# }
+module "role" {
+  source  = "./role"
+  project = local.project
+}
+
+resource "aws_instance" "bastion" {
+  instance_type   = "t2.micro"
+  ami             = "ami-0574da719dca65348"
+  key_name        = local.key_name
+  subnet_id       = module.networking.vpc.public_subnets[0]
+  security_groups = [module.networking.security_groups.bastion]
+
+  root_block_device {
+    # device_name = "/dev/sda1"
+    volume_size = 20
+    volume_type = "gp3"
+    tags = {
+      Name        = "${local.project}-bastion-volume"
+      Project     = "${local.project}"
+      Environment = "prod"
+    }
+  }
+
+  depends_on = [
+    module.networking
+  ]
+
+  tags = {
+    Name        = "${local.project}-bastion"
+    Project     = "${local.project}"
+    Environment = "prod"
+  }
+}

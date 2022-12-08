@@ -40,7 +40,7 @@ resource "aws_security_group" "web_sg" {
   }
 
   ingress {
-    description     = "HTTP access from load balancer"
+    description     = "SSH access from bastion"
     protocol        = "tcp"
     from_port       = 22
     to_port         = 22

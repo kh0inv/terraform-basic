@@ -1,3 +1,15 @@
+variable "project" {
+  type = string
+}
+
+variable "subnet_group" {
+  type = any
+}
+
+variable "security_group" {
+  type = any
+}
+
 resource "aws_db_instance" "database" {
   db_name                = "laravel"
   engine                 = "mysql"

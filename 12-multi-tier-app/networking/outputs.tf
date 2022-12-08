@@ -2,7 +2,7 @@ output "vpc" {
   value = module.vpc
 }
 
-output "sg" {
+output "security_groups" {
   value = {
     bastion = aws_security_group.bastion_sg.id
     web     = aws_security_group.web_sg.id
