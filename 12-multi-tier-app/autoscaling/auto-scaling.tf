@@ -18,7 +18,7 @@ resource "aws_launch_template" "web" {
     device_name = "/dev/sda1"
 
     ebs {
-      volume_size = 20
+      volume_size = 60
       volume_type = "gp3"
     }
   }
