@@ -1,6 +1,7 @@
 locals {
   project  = "mamnon"
   key_name = "admin-khoinv-key"
+  env      = "prod"
 }
 
 provider "aws" {
@@ -16,24 +17,17 @@ module "networking" {
   public_subnets  = ["10.192.10.0/24", "10.192.11.0/24"]
 }
 
-# module "database" {
-#   source = "./database"
+module "database" {
+  source = "./database"
 
-#   project        = local.project
-#   subnet_group   = module.networking.db_subnet_group
-#   security_group = module.networking.security_group
+  project        = local.project
+  subnet_group   = module.networking.db_subnet_group
+  security_group = module.networking.security_group
 
-#   depends_on = [
-#     module.networking
-#   ]
-# }
-
-# module "loadbalancer" {
-#   source = "./loadbalancer"
-
-#   project = local.project
-#   security_groups = module.networking.security_groups
-# }
+  depends_on = [
+    module.networking
+  ]
+}
 
 module "autoscaling" {
   source = "./autoscaling"
@@ -63,13 +57,12 @@ resource "aws_instance" "bastion" {
   security_groups = [module.networking.security_groups.bastion]
 
   root_block_device {
-    # device_name = "/dev/sda1"
     volume_size = 20
     volume_type = "gp3"
     tags = {
       Name        = "${local.project}-bastion-volume"
       Project     = "${local.project}"
-      Environment = "prod"
+      Environment = "${local.env}"
     }
   }
 
@@ -80,6 +73,6 @@ resource "aws_instance" "bastion" {
   tags = {
     Name        = "${local.project}-bastion"
     Project     = "${local.project}"
-    Environment = "prod"
+    Environment = "${local.env}"
   }
 }

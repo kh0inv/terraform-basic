@@ -28,7 +28,7 @@ resource "aws_iam_role" "ec2_instance_role" {
           Effect   = "Allow"
           Action   = ["s3:*"]
           Resource = "*"
-        },
+        }
       ]
     })
   }

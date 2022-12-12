@@ -97,9 +97,9 @@ resource "aws_iam_role" "eks_fargate_role" {
   managed_policy_arns = ["arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"]
 }
 
-resource "aws_eks_fargate_profile" "kube_system" {
+resource "aws_eks_fargate_profile" "game_2048" {
   cluster_name           = aws_eks_cluster.cluster.name
-  fargate_profile_name   = "kube-system"
+  fargate_profile_name   = "game-2048"
   pod_execution_role_arn = aws_iam_role.eks_fargate_role.arn
 
   # These subnets must have the following resource tag:
@@ -107,6 +107,6 @@ resource "aws_eks_fargate_profile" "kube_system" {
   subnet_ids = module.vpc.private_subnets
 
   selector {
-    namespace = "kube-system"
+    namespace = "game-2048"
   }
 }

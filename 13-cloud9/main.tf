@@ -13,7 +13,7 @@ resource "aws_cloud9_environment_ec2" "admin" {
   automatic_stop_time_minutes = 30
 
   tags = {
-    Project     = "${var.project}"
+    Project = "${var.project}"
   }
 }
 
@@ -41,16 +41,16 @@ resource "aws_iam_role" "admin_role" {
       Statement = [
         {
           Effect   = "Allow"
-          Action   = "*"
+          Action   = "s3:*"
           Resource = "*"
-        },
+        }
       ]
     })
   }
 
   tags = {
-    Name        = "${var.project}-admin-role"
-    Project     = "${var.project}"
+    Name    = "${var.project}-admin-role"
+    Project = "${var.project}"
   }
 }
 
