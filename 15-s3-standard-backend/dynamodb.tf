@@ -1,5 +1,5 @@
-resource "aws_dynamodb_table" "backend_table" {
-  name         = "${var.project}-backend-table"
+resource "aws_dynamodb_table" "be_table" {
+  name = "${var.project}-be-table"
 
   hash_key     = "LockID"
   billing_mode = "PAY_PER_REQUEST"
@@ -9,5 +9,5 @@ resource "aws_dynamodb_table" "backend_table" {
     type = "S"
   }
 
-  tags = merge({ Name = "${var.project}-backend-table" }, local.tags)
+  tags = merge({ Name = "${var.project}-be-table" }, local.tags)
 }
