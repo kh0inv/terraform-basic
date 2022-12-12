@@ -22,7 +22,7 @@ module "database" {
 
   project        = local.project
   subnet_group   = module.networking.db_subnet_group
-  security_group = module.networking.security_group
+  security_group = module.networking.security_groups
 
   depends_on = [
     module.networking
@@ -61,8 +61,8 @@ resource "aws_instance" "bastion" {
     volume_type = "gp3"
     tags = {
       Name        = "${local.project}-bastion-volume"
-      Project     = "${local.project}"
-      Environment = "${local.env}"
+      Project     = local.project
+      Environment = local.env
     }
   }
 
@@ -72,7 +72,7 @@ resource "aws_instance" "bastion" {
 
   tags = {
     Name        = "${local.project}-bastion"
-    Project     = "${local.project}"
-    Environment = "${local.env}"
+    Project     = local.project
+    Environment = local.env
   }
 }
