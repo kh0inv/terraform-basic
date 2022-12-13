@@ -19,6 +19,13 @@ resource "aws_security_group" "bastion_sg" {
   #   cidr_blocks      = ["0.0.0.0/0"]
   # }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name        = "${var.project}-bastion-sg"
     Project     = var.project
@@ -45,6 +52,13 @@ resource "aws_security_group" "web_sg" {
     from_port       = 22
     to_port         = 22
     security_groups = [aws_security_group.bastion_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -75,6 +89,13 @@ resource "aws_security_group" "lb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name        = "${var.project}-lb-sg"
     Project     = var.project
@@ -93,6 +114,13 @@ resource "aws_security_group" "db_sg" {
     from_port       = 3306
     to_port         = 3306
     security_groups = [aws_security_group.web_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
