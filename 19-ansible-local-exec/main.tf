@@ -54,7 +54,9 @@ resource "aws_instance" "remote-server" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -u ubuntu --key-file admin-khoinv-key.pem -T 300 -i '${self.public_ip},', playbook.yaml"
+    command = "ansible-playbook -u ubuntu --key-file admin-khoinv-key.pem -T 300 -i '${self.public_ip}', playbook.yaml"
+    # on_failure = continue
+    on_failure = fail
   }
 
   tags = {
