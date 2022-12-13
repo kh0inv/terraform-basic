@@ -1,6 +1,6 @@
 locals {
-  s3_origin_id         = "access-identity-s3-a"
-  s3_origin_staging_id = "access-identity-s3-b"
+  s3_origin_id         = "access-identity-web-a"
+  s3_origin_staging_id = "access-identity-web-b"
 }
 
 resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
@@ -10,8 +10,17 @@ resource "aws_cloudfront_origin_access_identity" "origin_access_identity" {
 resource "aws_cloudfront_distribution" "s3_distribution" {
 
   origin {
-    domain_name = module.s3-a.web.bucket_regional_domain_name
+    domain_name = module.web_a.web.bucket_regional_domain_name
     origin_id   = local.s3_origin_id
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
+    }
+  }
+
+  origin {
+    domain_name = module.web_b.web.bucket_regional_domain_name
+    origin_id   = local.s3_origin_staging_id
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.origin_access_identity.cloudfront_access_identity_path
@@ -32,8 +41,26 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       query_string_cache_keys = ["index"]
 
       cookies {
-        forward = "none"
+        forward = "all"
       }
+    }
+
+    lambda_function_association {
+      event_type   = "viewer-request"
+      lambda_arn   = aws_lambda_function.viewer_request_function.qualified_arn
+      include_body = false
+    }
+
+    lambda_function_association {
+      event_type   = "origin-request"
+      lambda_arn   = aws_lambda_function.origin_request_function.qualified_arn
+      include_body = false
+    }
+
+    lambda_function_association {
+      event_type   = "origin-response"
+      lambda_arn   = aws_lambda_function.origin_response_function.qualified_arn
+      include_body = false
     }
 
     viewer_protocol_policy = "allow-all"
@@ -51,4 +78,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   viewer_certificate {
     cloudfront_default_certificate = true
   }
+
+  tags = local.tags
 }
