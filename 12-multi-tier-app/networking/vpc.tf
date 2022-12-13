@@ -13,7 +13,7 @@ module "vpc" {
   single_nat_gateway = true
 
   tags = {
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }
@@ -32,7 +32,7 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 
   tags = {
     Name        = "${var.project}-db-subnet-group"
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }

@@ -34,14 +34,14 @@ resource "aws_launch_template" "web" {
     resource_type = "volume"
     tags = {
       Name        = "${var.project}-volume"
-      Project     = "${var.project}"
+      Project     = var.project
       Environment = "prod"
     }
   }
 
   tags = {
     Name        = "${var.project}-launch-template"
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }

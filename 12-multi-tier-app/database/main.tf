@@ -24,7 +24,7 @@ resource "aws_db_instance" "database" {
 
   tags = {
     Name        = "${var.project}-rds"
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }

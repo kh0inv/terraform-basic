@@ -21,7 +21,7 @@ resource "aws_security_group" "bastion_sg" {
 
   tags = {
     Name        = "${var.project}-bastion-sg"
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }
@@ -49,7 +49,7 @@ resource "aws_security_group" "web_sg" {
 
   tags = {
     Name        = "${var.project}-web-sg"
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }
@@ -77,7 +77,7 @@ resource "aws_security_group" "lb_sg" {
 
   tags = {
     Name        = "${var.project}-lb-sg"
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }
@@ -97,7 +97,7 @@ resource "aws_security_group" "db_sg" {
 
   tags = {
     Name        = "${var.project}-db-sg"
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }

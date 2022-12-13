@@ -1,21 +1,21 @@
 provider "aws" {
-  region = var.region
+  region = local.region
 }
 
 locals {
-  tags = {
-    Project     = var.project
-    Environment = var.env
-  }
+  region  = "us-east-1"
+  project = "mamnon"
+  env     = "prod"
+}
+
+module "s3-a" {
+  source        = "./s3"
+  project       = local.project
+  env           = local.env
+  div           = "a"
+  principal_arn = aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn
 }
 
 output "dns" {
   value = aws_cloudfront_distribution.s3_distribution.domain_name
-}
-
-module "s3-a" {
-  source  = "./s3"
-  project = var.project
-  env     = var.env
-  tags    = local.tags
 }

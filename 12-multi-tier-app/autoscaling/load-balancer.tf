@@ -7,7 +7,7 @@ resource "aws_lb" "alb" {
 
   tags = {
     Name        = "${var.project}-alb"
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }
@@ -74,7 +74,7 @@ resource "aws_lb_target_group" "target_group" {
 
   tags = {
     Name        = "${var.project}-target-group"
-    Project     = "${var.project}"
+    Project     = var.project
     Environment = "prod"
   }
 }

@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "web" {
-  bucket        = "${var.project}-${var.env}-hosting-bucket"
+  bucket        = "${var.project}-${var.env}-${var.div}-bucket"
   force_destroy = true
 
   tags = {
@@ -31,27 +31,17 @@ resource "aws_s3_bucket_policy" "web_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow"
-        Action = "s3:GetObject"
-        Resources = "${aws_s3_bucket.web.arn}/*"
+        Effect   = "Allow"
+        Action   = "s3:GetObject"
+        Resource = "${aws_s3_bucket.web.arn}/*"
         Principal = {
-          AWS = "${var.principal_arn}"
+          AWS = var.principal_arn
         }
       },
     ]
   })
 }
 
-# data "aws_iam_policy_document" "web_policy_doc" {
-#   statement {
-#     actions   = ["s3:GetObject"]
-#     resources = ["${aws_s3_bucket.web.arn}/*"]
-
-#     principals {
-#       type = "AWS"
-#       identifiers = [
-#         aws_cloudfront_origin_access_identity.origin_access_identity.iam_arn
-#       ]
-#     }
-#   }
-# }
+output "web" {
+  value = aws_s3_bucket.web
+}
