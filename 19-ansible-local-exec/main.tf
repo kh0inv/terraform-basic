@@ -39,10 +39,10 @@ resource "aws_instance" "remote-server" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt-get update -y",
-      "sudo apt-get install -y nginx",
-      "sudo systemctl start nginx",
-      "sudo systemctl enable nginx"
+      "sudo apt update -y",
+      "sudo apt install -y software-properties-common",
+      "sudo apt-add-repository --yes --update ppa:ansible/ansible",
+      "sudo apt install -y ansible"
     ]
 
     connection {
@@ -51,6 +51,10 @@ resource "aws_instance" "remote-server" {
       private_key = file("./admin-khoinv-key.pem")
       host        = self.public_ip
     }
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -u ubuntu --key-file admin-khoinv-key.pem -T 300 -i '${self.public_ip},', playbook.yaml"
   }
 
   tags = {
