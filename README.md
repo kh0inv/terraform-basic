@@ -210,3 +210,25 @@ ouput "ec2_output" {
   }
 }
 ```
+## Workspaces
+
+Liệt kê các workspace hiện có
+```
+terraform workspace list
+```
+
+Tạo mới workspace
+```
+terraform workspace new dev
+terraform workspace new pro
+```
+
+Chuyển đổi workspace
+```
+terraform workspace select dev
+```
+
+Khởi tạo tài nguyên, với tùy chọn giá trị đầu vào
+```
+terraform apply -var-file=env/dev.tfvars -auto-approve
+```
