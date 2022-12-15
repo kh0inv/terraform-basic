@@ -124,4 +124,4 @@ resource "aws_eks_fargate_profile" "game_2048" {
 #aws eks update-kubeconfig --name eks-alb-2048game --region us-east-1  --alias test-2048
 #kubectl config use-context eks-alb-2048game
 #aws eks --region ap-southeast-1 update-kubeconfig --name prod-eks-magento --alias ASUS-Prod
-#export KUBECONFIG=$(pwd)/kube_config_rancher-cluster.yml
+#export KUBECONFIG=/mnt/c/Users/khoinv/.kube/config

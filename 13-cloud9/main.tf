@@ -1,9 +1,11 @@
 variable "region" {
   type = string
+  default = "us-east-1"
 }
 
 variable "project" {
   type = string
+  default = "mamnon"
 }
 
 resource "aws_cloud9_environment_ec2" "admin" {
@@ -63,6 +65,6 @@ output "cloud9_url" {
   value = "https://${var.region}.console.aws.amazon.com/cloud9/ide/${aws_cloud9_environment_ec2.admin.id}"
 }
 
-output "admin_profile" {
-  value = aws_iam_instance_profile.admin_profile
+output "admin_profile_name" {
+  value = aws_iam_instance_profile.admin_profile.name
 }
