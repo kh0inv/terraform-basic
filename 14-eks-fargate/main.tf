@@ -1,13 +1,16 @@
 variable "cluster_name" {
-  type = string
+  type    = string
+  default = "eks-alb-2048game"
 }
 
 variable "region" {
-  type = string
+  type    = string
+  default = "us-east-1"
 }
 
 variable "project" {
-  type = string
+  type    = string
+  default = "mamnon"
 }
 
 module "vpc" {
@@ -79,7 +82,6 @@ resource "aws_eks_cluster" "cluster" {
   depends_on = [aws_iam_role.eks_role]
 }
 
-
 resource "aws_iam_role" "eks_fargate_role" {
   name = "eks-fargate-role"
 
@@ -110,3 +112,16 @@ resource "aws_eks_fargate_profile" "game_2048" {
     namespace = "game-2048"
   }
 }
+
+# resource "aws_eks_addon" "coredns" {
+#   addon_name        = "coredns"
+#   addon_version     = "v1.8.4-eksbuild.1"
+#   cluster_name      = var.cluster_name
+#   resolve_conflicts = "OVERWRITE"
+#   depends_on        = [aws_eks_cluster.cluster]
+# }
+
+#aws eks update-kubeconfig --name eks-alb-2048game --region us-east-1  --alias test-2048
+#kubectl config use-context eks-alb-2048game
+#aws eks --region ap-southeast-1 update-kubeconfig --name prod-eks-magento --alias ASUS-Prod
+#export KUBECONFIG=$(pwd)/kube_config_rancher-cluster.yml
