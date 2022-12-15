@@ -1,10 +1,10 @@
 variable "region" {
-  type = string
+  type    = string
   default = "us-east-1"
 }
 
 variable "project" {
-  type = string
+  type    = string
   default = "mamnon"
 }
 
@@ -43,7 +43,7 @@ resource "aws_iam_role" "admin_role" {
       Statement = [
         {
           Effect   = "Allow"
-          Action   = "s3:*"
+          Action   = "*"
           Resource = "*"
         }
       ]
