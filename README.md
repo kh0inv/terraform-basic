@@ -232,3 +232,10 @@ Khởi tạo tài nguyên, với tùy chọn giá trị đầu vào
 ```
 terraform apply -var-file=env/dev.tfvars -auto-approve
 ```
+## Working rules
+
+- chỉ có 1 template duy nhất cho các environment, phân loại environment thì dùng cd tool như octopus, jenkins, gitlab hoặc terraform cloud
+- push mọi thứ lên vcs, trừ value file (tfvars, .terraform*)
+- split thành các module (main, variables, inputs, outputs, ...), tránh wall of text in a file
+- gom tất cả variables vào 1 local resource duy nhất.
+- chỉ dùng module của các provider lớn: hashicorp, aws, kubernetes, cloudflare, azure, không dùng module của cá nhân
